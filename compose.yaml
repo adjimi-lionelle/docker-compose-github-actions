@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: hello
+      MYSQL_USER: hello
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./site_ibai/ibai_backend.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      retries: 10
+
+  backend:
+    build: ./site_ibai
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: mysql://ibai:${DB_PASSWORD}@db:3306/ibai?serverVersion=8.0&charset=utf8mb4
+      CORS_ALLOW_ORIGIN: '^http://localhost:8080$'
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+    volumes:
+      - uploads:/var/www/html/public/uploads
+      - ./secrets/jwt:/var/www/html/config/jwt:ro
+    ports:
+      - "8000:80"
+
+  frontend:
+    build:
+      context: ./ibai-frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_API_BASE_URL_API: http://localhost:8000/api
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
+  uploads:
