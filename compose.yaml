@@ -2,8 +2,8 @@ services:
   db:
     image: mysql:8.4
     environment:
-      MYSQL_DATABASE: hello
-      MYSQL_USER: hello
+      MYSQL_DATABASE: ibai
+      MYSQL_USER: ibai
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     volumes:
