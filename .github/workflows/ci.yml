@@ -23,8 +23,8 @@ jobs:
           context: ./site_ibai
           push: true
           tags: |
-            ghcr.io/<adjimi-lionelle>/ibai-backend:${{ github.sha }}
-            ghcr.io/<adjimi-lionelle>/ibai-backend:latest
+            ghcr.io/adjimi-lionelle/ibai-backend:${{ github.sha }}
+            ghcr.io/adjimi-lionelle/ibai-backend:latest
 
       - uses: docker/build-push-action@v6
         with:
@@ -34,5 +34,5 @@ jobs:
             VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
             VITE_API_BASE_URL_API=${{ vars.VITE_API_BASE_URL_API }}
           tags: |
-            ghcr.io/<adjimi-lionelle>/ibai-frontend:${{ github.sha }}
-            ghcr.io/<adjimi-lionelle>/ibai-frontend:latest
+            ghcr.io/adjimi-lionelle/ibai-frontend:${{ github.sha }}
+            ghcr.io/adjimi-lionelle/ibai-frontend:latest
