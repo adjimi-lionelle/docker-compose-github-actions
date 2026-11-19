@@ -1,0 +1,38 @@
+name: ci
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./site_ibai
+          push: true
+          tags: |
+            ghcr.io/<compte-en-minuscules>/ibai-backend:${{ github.sha }}
+            ghcr.io/<compte-en-minuscules>/ibai-backend:latest
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./ibai-frontend
+          push: true
+          build-args: |
+            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
+            VITE_API_BASE_URL_API=${{ vars.VITE_API_BASE_URL_API }}
+          tags: |
+            ghcr.io/<compte-en-minuscules>/ibai-frontend:${{ github.sha }}
+            ghcr.io/<compte-en-minuscules>/ibai-frontend:latest
