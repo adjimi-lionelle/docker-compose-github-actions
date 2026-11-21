@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ibai
+      MYSQL_USER: ibai
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      retries: 10
+
+  backend:
+    image: ghcr.io/adjimi-lionelle/ibai-backend:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      APP_SECRET: ${APP_SECRET}
+      TRUSTED_PROXIES: 127.0.0.1,PRIVATE_SUBNETS
+      DATABASE_URL: mysql://ibai:${DB_PASSWORD}@db:3306/ibai?serverVersion=8.0&charset=utf8mb4
+      CORS_ALLOW_ORIGIN: '^https://ibai\.univ-garoua\.cm$'
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+    volumes:
+      - uploads:/var/www/html/public/uploads
+      - ./secrets/jwt:/var/www/html/config/jwt:ro
+    ports:
+
+      - "127.0.0.1:8000:80"
+
+  frontend:
+    image: ghcr.io/adjimi-lionelle/ibai-frontend:${TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+
+volumes:
+  db_data:
+  uploads:
