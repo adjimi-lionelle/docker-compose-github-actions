@@ -257,7 +257,7 @@ const Home: React.FC = () => {
           <div className="row animate-box">
             <div className="col-md-8 col-md-offset-2 text-center fh5co-heading">
               <h2>Admission</h2>
-              <p>Rejoignez l'Institut des Beaux-Arts et de l'Innovation en passant notre concours d'entrée.</p>
+              <p>Rejoignez l'Institut des Beaux-Arts et de l'Innovation en passant notre concours d'entrée en pleine essort.</p>
             </div>
           </div>
           <div className="row animate-box">
